@@ -4,11 +4,18 @@
         <link rel="stylesheet" href="style.css" type="text/css">
     </head>
     <body>
-        <table>
-            <tr id = board>
-                <button>move</button>
-            </tr>
+        <table id = board>
         </table>
+        <button id = 'button' name = 'moveMaker'>move</button>
+        <form id = dimensions>
+            <fieldset>
+                <label>height</label>
+                <input name = 'height' type=number>
+                <label>width</label>
+                <input name = 'width' type=number>
+                <button type ="submit">Submit</button>
+            </fieldset>    
+        </form>    
         <script src ="app.js"></script>
     </body>
 </html>
