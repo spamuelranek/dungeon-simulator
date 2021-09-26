@@ -30,31 +30,6 @@ Board.prototype.playerLocation = function(){
     return startArray;
 }
 
-// start to move process. Trying to splice into print action
-Board.prototype.turnAction = function(event){  
-    this.firstStart = false;
-    console.log("coolio!");
-    startArray[0][0]=5
-    printBoardContent(height, width);
-}
-
-// // Bottleneck for switching through turns
-// Board.prototype.turnSwitch = function(){
-    
-//     //allows for setting the starting position
-//     if(this.firstStart == true){
-//         let boardContent = this.playerLocation();
-//         return boardContent;
-//         } 
-        
-//         // interjects new board content array
-//         else{
-//         let boardContent = this.playerLocation();
-//         return boardContent;
-//     }
-// }
-
-
 //builds board and puts ids content into it
 function printBoard(){
     let table = document.getElementById("board");
@@ -98,7 +73,22 @@ function printBoardContent(height,width){
 
 let turnGenerator = document.getElementById('button');
 
-
+// start to move process. Trying to splice into print action
+Board.prototype.turnAction = function(event){  
+    console.log("coolio!");
+    for( let row = 0; row<height; row++){
+        for ( let column = 0; column<width; column++){
+            if (startArray[row][column] == 1){
+                console.log(row,column);
+                xAxisMovement = column + 1;
+                startArray[row][column] = 0;
+                startArray[row][xAxisMovement] = 1;
+            }
+        }
+    }
+    console.log(startArray);
+    printBoardContent(height, width);
+}
 
 turnGenerator.addEventListener('click',Board.prototype.turnAction);
 
