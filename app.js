@@ -27,6 +27,12 @@ Board.prototype.arrayBoard = function(){
 Board.prototype.playerLocation = function(){
     let startLocation = Math.floor(startArray.length/2);
     startArray[startLocation][0] =1;
+
+    // tester: obstacle in path of player
+    let obstacleLocation = 3;
+    startArray[startLocation][obstacleLocation] = 5;
+
+
     return startArray;
 }
 
@@ -53,7 +59,7 @@ function printBoard(){
 }
 
 //puts content into it cells
-function printBoardContent(height,width){ 
+function printBoardContent(width,height){ 
 
     // goes through each row
     for (let row=0; row<height; row++){
@@ -69,25 +75,43 @@ function printBoardContent(height,width){
     }
 }
 
+ // moves the player forward and replaces the previous locaiton with a zero
+function playerMotion(){
+  for( let row = 0; row<height; row++){
+            for ( let column = 0; column<width; column++){
+               
+                // moves player forward
+                if (startArray[row][column] == 1){
+                    let xAxisMovement = column + 1;
+                    
+                    // obstacle avoidance
+                    if( startArray[row][xAxisMovement] > 1){
+                        let yAxisMovement = row - 1;
+                        startArray[row][column] = 0;
+                        startArray[yAxisMovement][column] =1
+                        break;
+                    }
+                    
+                    else {
+                    startArray[row][column] = 0;
+                    startArray[row][xAxisMovement] = 1;
+                    findingPlayer = true;
+                    break;
+                    }
 
+            }
+        }  
+    }
+}
 
+// targets the 'move' button
 let turnGenerator = document.getElementById('button');
 
-// start to move process. Trying to splice into print action
+// move process. splices into print action
 Board.prototype.turnAction = function(event){  
-    console.log("coolio!");
-    for( let row = 0; row<height; row++){
-        for ( let column = 0; column<width; column++){
-            if (startArray[row][column] == 1){
-                console.log(row,column);
-                xAxisMovement = column + 1;
-                startArray[row][column] = 0;
-                startArray[row][xAxisMovement] = 1;
-            }
-        }
-    }
+    playerMotion();    
     console.log(startArray);
-    printBoardContent(height, width);
+    printBoardContent(width, height);
 }
 
 turnGenerator.addEventListener('click',Board.prototype.turnAction);
@@ -100,18 +124,15 @@ function createBoard(event) {
     height = event.target.height.value;
     width = event.target.width.value;
     printBoard();
-    let newBoard = new Board(height, width);
+    let newBoard = new Board(width,height);
     console.log(newBoard);
     newBoard.arrayBoard();
     newBoard.playerLocation();
-    printBoardContent(height,width);
+    printBoardContent(width,height);
 }
 
 getDimensions.addEventListener('submit',createBoard);
 
-// let board = new Board(5,3);
-// console.log(board);
-// board.printBoard();
 
 
 
