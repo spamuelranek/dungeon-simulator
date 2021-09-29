@@ -3,6 +3,8 @@ let height = 0;
 let width =0;
 let startArray =[];
 
+
+
 //creates the instance of the board
 function Board(width,height){
     this.rows = height;
@@ -19,7 +21,7 @@ Board.prototype.arrayBoard = function(){
         }
         startArray.push(rowArray);
     }
-    console.log(startArray);
+    // console.log(startArray);
     return startArray;
 }
 
@@ -29,7 +31,7 @@ function randomGenerate (modifier){
 }
 
 // amount of obstacles on board
-let amountOfObstacles = 15;
+let amountOfObstacles = 20;
 
 function createObstacleArray(){
     let obstacleArray = [];
@@ -46,7 +48,7 @@ function createObstacleArray(){
 // hopefully places obstacles on board
 function placeObstacles(){
     let placementArray = createObstacleArray();
-    console.log(placementArray);
+    // console.log(placementArray);
     for(let i = 0; i<placementArray.length; i++){
         startArray[placementArray[i][0]][placementArray[i][1]] = 4;
     }
@@ -57,19 +59,8 @@ function placeObstacles(){
 // sets the player start location
 Board.prototype.playerLocation = function(){
 
-
-
     let startLocation = Math.floor(startArray.length/2);
     startArray[startLocation][0] =1;
-
-    // // tester: obstacle in path of player
-    // let obstacleLocation = 3;
-    // let modifiedY = startLocation - 1;
-    
-    // let modifiedX = obstacleLocation + 2;
-    // startArray[startLocation][obstacleLocation] = 5;
-    // startArray[modifiedY][modifiedX] = 5
-
 
     return startArray;
 }
@@ -107,6 +98,18 @@ function printBoardContent(width,height){
             let cellIdcontent = " cell " + row + ' at ' + column;
             let cell = document.getElementById(cellIdcontent);
             cell.textContent = startArray[row][column];
+            if(cell.textContent == 1){
+                cell.setAttribute('class','player');
+                cell.textContent = '';
+            }
+            else if(cell.textContent == 4){
+                cell.setAttribute('class','obstacle');
+                cell.textContent = '';
+            }
+            else{
+                cell.setAttribute('class','floor');
+                cell.textContent = '';
+            }
 
         }
 
@@ -120,20 +123,50 @@ function playerMotion(){
                
                 // moves player forward
                 if (startArray[row][column] == 1){
-                    let xAxisMovement = column + 1;
-                    
+
+                    let xAxisMovementright = column + 1;
+                    let xAxisMovementleft = column - 1;
+
+                    let yAxisMovementup = row - 1;
+                    let yAxisMovementdown = row + 1;
+
                     // obstacle avoidance
-                    if( startArray[row][xAxisMovement] > 1){
-                        let yAxisMovement = row - 1;
-                        startArray[row][column] = 0;
-                        startArray[yAxisMovement][column] =1
-                        break;
+                    if( startArray[row][xAxisMovementright] > 1 &&(startArray[yAxisMovementup][column] == 0||startArray[yAxisMovementdown][column]==0)){
+                        while(startArray[yAxisMovementup][column] == 0 && startArray[yAxisMovementdown][column]==0){
+                            let choice = randomGenerate(2);
+                            console.log(choice);
+                            if(choice == 0){
+                                startArray[row][column] = 0;
+                                startArray[yAxisMovementup][column] =1
+                                console.log('went up one square when i had a choice');
+                                break;
+                            }
+                            if(choice ==1){
+                                startArray[row][column] = 0;
+                                startArray[yAxisMovementdown][column] =1
+                                console.log('went down one square when i had a choice');
+                                break;
+                            }
+
+                        }
+                        if(startArray[yAxisMovementup][column] == 0){
+                            startArray[row][column] = 0;
+                            startArray[yAxisMovementup][column] =1
+                            console.log('went up one square when i had no choice');
+                            break;
+                        }
+                        if(startArray[yAxisMovementdown][column] == 0){
+                            startArray[row][column] = 0;
+                            startArray[yAxisMovementdown][column] =1
+                            console.log('went down one square when i had no choice');
+                            break;
+                        }
                     }
                     
                     else {
                     startArray[row][column] = 0;
-                    startArray[row][xAxisMovement] = 1;
-                    findingPlayer = true;
+                    startArray[row][xAxisMovementright] = 1;
+                    console.log('went right one square');
                     break;
                     }
 
@@ -148,7 +181,7 @@ let turnGenerator = document.getElementById('button');
 // move process. splices into print action
 Board.prototype.turnAction = function(event){  
     playerMotion();    
-    console.log(startArray);
+    // console.log(startArray);
     printBoardContent(width, height);
 }
 
@@ -163,7 +196,7 @@ function createBoard(event) {
     width = event.target.width.value;
     printBoard();
     let newBoard = new Board(width,height);
-    console.log(newBoard);
+    // console.log(newBoard);
     newBoard.arrayBoard();
     placeObstacles();
     newBoard.playerLocation();

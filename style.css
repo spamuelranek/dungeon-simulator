@@ -5,3 +5,15 @@ td{
     font-size: 2.5em;
     text-align: center;
 }
+
+.player{
+    background-color: green;
+}
+
+.obstacle{
+    background-color: black;
+}
+
+.floor{
+    background-color: grey;
+}
