@@ -23,14 +23,52 @@ Board.prototype.arrayBoard = function(){
     return startArray;
 }
 
+function randomGenerate (modifier){
+    let newValue = Math.round(Math.random() * (modifier-1));
+    return newValue;
+}
+
+// amount of obstacles on board
+let amountOfObstacles = 15;
+
+function createObstacleArray(){
+    let obstacleArray = [];
+    for (let i = 0; i<amountOfObstacles; i++){
+        let yAxis = randomGenerate(height);
+        let xAxis = randomGenerate(width);
+        let xyAxis = [yAxis,xAxis];
+        obstacleArray.push(xyAxis);
+
+    }
+    return obstacleArray;
+}
+
+// hopefully places obstacles on board
+function placeObstacles(){
+    let placementArray = createObstacleArray();
+    console.log(placementArray);
+    for(let i = 0; i<placementArray.length; i++){
+        startArray[placementArray[i][0]][placementArray[i][1]] = 4;
+    }
+    return startArray;
+}
+
+
 // sets the player start location
 Board.prototype.playerLocation = function(){
+
+
+
     let startLocation = Math.floor(startArray.length/2);
     startArray[startLocation][0] =1;
 
-    // tester: obstacle in path of player
-    let obstacleLocation = 3;
-    startArray[startLocation][obstacleLocation] = 5;
+    // // tester: obstacle in path of player
+    // let obstacleLocation = 3;
+    // let modifiedY = startLocation - 1;
+    
+    // let modifiedX = obstacleLocation + 2;
+    // startArray[startLocation][obstacleLocation] = 5;
+    // startArray[modifiedY][modifiedX] = 5
 
 
     return startArray;
@@ -127,6 +165,7 @@ function createBoard(event) {
     let newBoard = new Board(width,height);
     console.log(newBoard);
     newBoard.arrayBoard();
+    placeObstacles();
     newBoard.playerLocation();
     printBoardContent(width,height);
 }
