@@ -46,21 +46,28 @@ function createObstacleArray(){
 }
 
 // hopefully places obstacles on board
-function placeObstacles(){
-    let placementArray = createObstacleArray();
-    // console.log(placementArray);
-    for(let i = 0; i<placementArray.length; i++){
-        startArray[placementArray[i][0]][placementArray[i][1]] = 4;
-    }
-    return startArray;
-}
+// function placeObstacles(){
+//     let placementArray = createObstacleArray();
+//     console.log(placementArray);
+//     for(let i = 0; i<placementArray.length; i++){
+//         startArray[placementArray[i][0]][placementArray[i][1]] = 4;
+//     }
+//     return startArray;
+// }
 
 
 // sets the player start location
 Board.prototype.playerLocation = function(){
 
     let startLocation = Math.floor(startArray.length/2);
+    let obstacleTop = startLocation - 1;
+    let obstacleBottom = startLocation + 1;
+    
     startArray[startLocation][0] =1;
+    startArray[startLocation][3] =4;
+    startArray[obstacleTop][3] = 4;
+    startArray[obstacleBottom][3] = 4;
+
 
     return startArray;
 }
@@ -118,60 +125,82 @@ function printBoardContent(width,height){
 
  // moves the player forward and replaces the previous locaiton with a zero
 function playerMotion(){
-  for( let row = 0; row<height; row++){
-            for ( let column = 0; column<width; column++){
-               
-                // moves player forward
-                if (startArray[row][column] == 1){
 
-                    let xAxisMovementright = column + 1;
-                    let xAxisMovementleft = column - 1;
+    let moveEnd = false;    
+    while(moveEnd === false){
 
-                    let yAxisMovementup = row - 1;
-                    let yAxisMovementdown = row + 1;
+    for( let row = 0; row<height; row++){
+        if( moveEnd !== false){
+            break
+        }
+        
+                for ( let column = 0; column<width; column++){
+                
+                    // moves player forward
+                    if (startArray[row][column] == 1){
 
-                    // obstacle avoidance
-                    if( startArray[row][xAxisMovementright] > 1 &&(startArray[yAxisMovementup][column] == 0||startArray[yAxisMovementdown][column]==0)){
-                        while(startArray[yAxisMovementup][column] == 0 && startArray[yAxisMovementdown][column]==0){
-                            let choice = randomGenerate(2);
-                            console.log(choice);
-                            if(choice == 0){
-                                startArray[row][column] = 0;
-                                startArray[yAxisMovementup][column] =1
-                                console.log('went up one square when i had a choice');
-                                break;
+                        let xAxisMovementright = column + 1;
+                        let xAxisMovementleft = column - 1;
+
+                        let yAxisMovementup = row - 1;
+                        let yAxisMovementdown = row + 1;
+                        // let moveNow = false;
+
+                        // obstacle avoidance
+                        if( startArray[row][xAxisMovementright] > 1 &&(startArray[yAxisMovementup][column] == 0||startArray[yAxisMovementdown][column]==0)){
+                            if(startArray[yAxisMovementup][column] == 0 && startArray[yAxisMovementdown][column]==0){
+                                let choice = randomGenerate(2);
+                                console.log(choice);
+                                if(choice == 0){
+                                    startArray[row][column] = 0;
+                                    startArray[yAxisMovementup][column] =1
+                                    console.log('went up one square when i had a choice');
+                                    moveEnd = true
+                                    // moveNow = false;
+                                    break;
+                                }
+                                if(choice ==1){
+                                    startArray[row][column] = 0;
+                                    startArray[yAxisMovementdown][column] =1
+                                    console.log('went down one square when i had a choice');
+                                    moveEnd = true;
+                                    // moveNow = false;
+                                    break;
+                                }
+
                             }
-                            if(choice ==1){
-                                startArray[row][column] = 0;
-                                startArray[yAxisMovementdown][column] =1
-                                console.log('went down one square when i had a choice');
-                                break;
+
+                            if( startArray[row][xAxisMovementright] > 1){
+
+                                if(startArray[yAxisMovementup][column] == 0 && startArray[yAxisMovementdown][column] > 1 && moveNow === true){
+                                    startArray[row][column] = 0;
+                                    startArray[yAxisMovementup][column] =1
+                                    console.log('went up one square when i had no choice');
+                                    moveEnd = true;
+                                    break;
+                                }
+                                if(startArray[yAxisMovementdown][column] == 0 && startArray[yAxisMovementup][column] > 1 && moveNow === true){
+                                    startArray[row][column] = 0;
+                                    startArray[yAxisMovementdown][column] =1
+                                    console.log('went down one square when i had no choice');
+                                    moveEnd = true;
+                                    break;
+                                }
                             }
+                        }
 
+                        else {
+                        startArray[row][column] = 0;
+                        startArray[row][xAxisMovementright] = 1;
+                        console.log('went right one square');
+                        moveEnd = true;
+                        break;
                         }
-                        if(startArray[yAxisMovementup][column] == 0){
-                            startArray[row][column] = 0;
-                            startArray[yAxisMovementup][column] =1
-                            console.log('went up one square when i had no choice');
-                            break;
-                        }
-                        if(startArray[yAxisMovementdown][column] == 0){
-                            startArray[row][column] = 0;
-                            startArray[yAxisMovementdown][column] =1
-                            console.log('went down one square when i had no choice');
-                            break;
-                        }
-                    }
-                    
-                    else {
-                    startArray[row][column] = 0;
-                    startArray[row][xAxisMovementright] = 1;
-                    console.log('went right one square');
-                    break;
-                    }
+                        
 
-            }
-        }  
+                }
+            }  
+        }
     }
 }
 
@@ -198,7 +227,7 @@ function createBoard(event) {
     let newBoard = new Board(width,height);
     // console.log(newBoard);
     newBoard.arrayBoard();
-    placeObstacles();
+    // placeObstacles();
     newBoard.playerLocation();
     printBoardContent(width,height);
 }
