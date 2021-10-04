@@ -45,15 +45,15 @@ function createObstacleArray(){
     return obstacleArray;
 }
 
-// hopefully places obstacles on board
-// function placeObstacles(){
-//     let placementArray = createObstacleArray();
-//     console.log(placementArray);
-//     for(let i = 0; i<placementArray.length; i++){
-//         startArray[placementArray[i][0]][placementArray[i][1]] = 4;
-//     }
-//     return startArray;
-// }
+//hopefully places obstacles on board
+function placeObstacles(){
+    let placementArray = createObstacleArray();
+    console.log(placementArray);
+    for(let i = 0; i<placementArray.length; i++){
+        startArray[placementArray[i][0]][placementArray[i][1]] = 4;
+    }
+    return startArray;
+}
 
 
 // sets the player start location
@@ -64,9 +64,7 @@ Board.prototype.playerLocation = function(){
     let obstacleBottom = startLocation + 1;
     
     startArray[startLocation][0] =1;
-    startArray[startLocation][3] =4;
-    startArray[obstacleTop][3] = 4;
-    startArray[obstacleBottom][3] = 4;
+
 
 
     return startArray;
@@ -172,14 +170,14 @@ function playerMotion(){
 
                             if( startArray[row][xAxisMovementright] > 1){
 
-                                if(startArray[yAxisMovementup][column] == 0 && startArray[yAxisMovementdown][column] > 1 && moveNow === true){
+                                if(startArray[yAxisMovementup][column] == 0 && startArray[yAxisMovementdown][column] > 1){
                                     startArray[row][column] = 0;
                                     startArray[yAxisMovementup][column] =1
                                     console.log('went up one square when i had no choice');
                                     moveEnd = true;
                                     break;
                                 }
-                                if(startArray[yAxisMovementdown][column] == 0 && startArray[yAxisMovementup][column] > 1 && moveNow === true){
+                                if(startArray[yAxisMovementdown][column] == 0 && startArray[yAxisMovementup][column] > 1){
                                     startArray[row][column] = 0;
                                     startArray[yAxisMovementdown][column] =1
                                     console.log('went down one square when i had no choice');
@@ -227,7 +225,7 @@ function createBoard(event) {
     let newBoard = new Board(width,height);
     // console.log(newBoard);
     newBoard.arrayBoard();
-    // placeObstacles();
+    placeObstacles();
     newBoard.playerLocation();
     printBoardContent(width,height);
 }
