@@ -31,7 +31,7 @@ function randomGenerate (modifier){
 }
 
 // amount of obstacles on board
-let amountOfObstacles = 20;
+let amountOfObstacles = 40;
 
 function createObstacleArray(){
     let obstacleArray = [];
@@ -133,6 +133,17 @@ function playerMotion(){
         }
         
                 for ( let column = 0; column<width; column++){
+                    if(startArray[row].length > width){
+                        height = 0;
+                        width =0;
+                        startArray =[];
+                        let table = document.getElementById("board");
+                        table.innerHTML = '';
+                        let parentEl = document.getElementById('buttonLocation');
+                        parentEl.innerHTML = '';
+                        moveEnd = true;
+                        break
+                    }
                 
                     // moves player forward
                     if (startArray[row][column] == 1){
@@ -142,10 +153,9 @@ function playerMotion(){
 
                         let yAxisMovementup = row - 1;
                         let yAxisMovementdown = row + 1;
-                        // let moveNow = false;
 
                         // obstacle avoidance
-                        if( startArray[row][xAxisMovementright] > 1 &&(startArray[yAxisMovementup][column] == 0||startArray[yAxisMovementdown][column]==0)){
+                        if( startArray[row][xAxisMovementright] > 1 && (startArray[yAxisMovementup][column] == 0 || startArray[yAxisMovementdown][column]==0)){
                             if(startArray[yAxisMovementup][column] == 0 && startArray[yAxisMovementdown][column]==0){
                                 let choice = randomGenerate(2);
                                 console.log(choice);
@@ -154,7 +164,6 @@ function playerMotion(){
                                     startArray[yAxisMovementup][column] =1
                                     console.log('went up one square when i had a choice');
                                     moveEnd = true
-                                    // moveNow = false;
                                     break;
                                 }
                                 if(choice ==1){
@@ -162,29 +171,34 @@ function playerMotion(){
                                     startArray[yAxisMovementdown][column] =1
                                     console.log('went down one square when i had a choice');
                                     moveEnd = true;
-                                    // moveNow = false;
                                     break;
                                 }
 
                             }
 
-                            if( startArray[row][xAxisMovementright] > 1){
 
-                                if(startArray[yAxisMovementup][column] == 0 && startArray[yAxisMovementdown][column] > 1){
-                                    startArray[row][column] = 0;
-                                    startArray[yAxisMovementup][column] =1
-                                    console.log('went up one square when i had no choice');
-                                    moveEnd = true;
-                                    break;
-                                }
-                                if(startArray[yAxisMovementdown][column] == 0 && startArray[yAxisMovementup][column] > 1){
-                                    startArray[row][column] = 0;
-                                    startArray[yAxisMovementdown][column] =1
-                                    console.log('went down one square when i had no choice');
-                                    moveEnd = true;
-                                    break;
-                                }
+                            if(startArray[yAxisMovementup][column] == 0 && startArray[yAxisMovementdown][column] > 1){
+                                startArray[row][column] = 0;
+                                startArray[yAxisMovementup][column] =1
+                                console.log('went up one square when i had no choice');
+                                moveEnd = true;
+                                break;
                             }
+                            if(startArray[yAxisMovementdown][column] == 0 && startArray[yAxisMovementup][column] > 1){
+                                startArray[row][column] = 0;
+                                startArray[yAxisMovementdown][column] =1
+                                console.log('went down one square when i had no choice');
+                                moveEnd = true;
+                                break;
+                            }
+                        }
+
+                        if(startArray[row][xAxisMovementright] > 1 && startArray[yAxisMovementup][column] > 1 && startArray[yAxisMovementdown][column] > 1){
+                            startArray[row][column] = 2;
+                            startArray[row][xAxisMovementleft] = 1
+                            console.log('went back one square because no way forward');
+                            moveEnd = true;
+                            break;
                         }
 
                         else {
@@ -203,7 +217,7 @@ function playerMotion(){
 }
 
 // targets the 'move' button
-let turnGenerator = document.getElementById('button');
+// let turnGenerator = document.getElementById('button');
 
 // move process. splices into print action
 Board.prototype.turnAction = function(event){  
@@ -212,9 +226,10 @@ Board.prototype.turnAction = function(event){
     printBoardContent(width, height);
 }
 
-turnGenerator.addEventListener('click',Board.prototype.turnAction);
+// turnGenerator.addEventListener('click',Board.prototype.turnAction);
 
 
+// places player location and sets up board
 let getDimensions = document.getElementById('dimensions');
 
 function createBoard(event) {
@@ -228,6 +243,18 @@ function createBoard(event) {
     placeObstacles();
     newBoard.playerLocation();
     printBoardContent(width,height);
+    let parentEl = document.getElementById('buttonLocation');
+    parentEl.innerHTML = '';
+    console.log(parentEl);
+    let buttonEl = document.createElement('button');
+    console.log(buttonEl);
+    buttonEl.setAttribute('id','button');
+    buttonEl.textContent = 'MOVE';
+    parentEl.appendChild(buttonEl);
+    let turnGenerator = document.getElementById('button');
+    turnGenerator.addEventListener('click',Board.prototype.turnAction);
+
+
 }
 
 getDimensions.addEventListener('submit',createBoard);
