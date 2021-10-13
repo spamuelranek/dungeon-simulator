@@ -52,6 +52,12 @@ function placeObstacles(){
     for(let i = 0; i<placementArray.length; i++){
         startArray[placementArray[i][0]][placementArray[i][1]] = 4;
     }
+    for(let i = 0; i<width; i++){
+        startArray[0][i] = 4;
+        let lastRow = height - 1;
+        console.log(lastRow);
+        startArray[lastRow][i] = 4;
+    }
     return startArray;
 }
 
@@ -155,19 +161,19 @@ function playerMotion(){
                         let yAxisMovementdown = row + 1;
 
                         // obstacle avoidance
-                        if( startArray[row][xAxisMovementright] > 1 && (startArray[yAxisMovementup][column] == 0 || startArray[yAxisMovementdown][column]==0)){
+                        if( startArray[row][xAxisMovementright] > 1 && (startArray[yAxisMovementup][column] < 1 || startArray[yAxisMovementdown][column]< 1 )){
                             if(startArray[yAxisMovementup][column] == 0 && startArray[yAxisMovementdown][column]==0){
                                 let choice = randomGenerate(2);
                                 console.log(choice);
                                 if(choice == 0){
-                                    startArray[row][column] = 0;
+                                    startArray[row][column] = startArray[row][column] + .2;
                                     startArray[yAxisMovementup][column] =1
                                     console.log('went up one square when i had a choice');
                                     moveEnd = true
                                     break;
                                 }
                                 if(choice ==1){
-                                    startArray[row][column] = 0;
+                                    startArray[row][column] = startArray[row][column] + .2;
                                     startArray[yAxisMovementdown][column] =1
                                     console.log('went down one square when i had a choice');
                                     moveEnd = true;
@@ -178,14 +184,14 @@ function playerMotion(){
 
 
                             if(startArray[yAxisMovementup][column] == 0 && startArray[yAxisMovementdown][column] > 1){
-                                startArray[row][column] = 0;
+                                startArray[row][column] = startArray[row][column] + .2;
                                 startArray[yAxisMovementup][column] =1
                                 console.log('went up one square when i had no choice');
                                 moveEnd = true;
                                 break;
                             }
                             if(startArray[yAxisMovementdown][column] == 0 && startArray[yAxisMovementup][column] > 1){
-                                startArray[row][column] = 0;
+                                startArray[row][column] = startArray[row][column] + .2;
                                 startArray[yAxisMovementdown][column] =1
                                 console.log('went down one square when i had no choice');
                                 moveEnd = true;
@@ -202,7 +208,7 @@ function playerMotion(){
                         }
 
                         else {
-                        startArray[row][column] = 0;
+                        startArray[row][column] = startArray[row][column] + .2;
                         startArray[row][xAxisMovementright] = 1;
                         console.log('went right one square');
                         moveEnd = true;
@@ -216,8 +222,6 @@ function playerMotion(){
     }
 }
 
-// targets the 'move' button
-// let turnGenerator = document.getElementById('button');
 
 // move process. splices into print action
 Board.prototype.turnAction = function(event){  
@@ -225,9 +229,6 @@ Board.prototype.turnAction = function(event){
     // console.log(startArray);
     printBoardContent(width, height);
 }
-
-// turnGenerator.addEventListener('click',Board.prototype.turnAction);
-
 
 // places player location and sets up board
 let getDimensions = document.getElementById('dimensions');
@@ -243,6 +244,8 @@ function createBoard(event) {
     placeObstacles();
     newBoard.playerLocation();
     printBoardContent(width,height);
+
+
     let parentEl = document.getElementById('buttonLocation');
     parentEl.innerHTML = '';
     console.log(parentEl);
@@ -251,6 +254,10 @@ function createBoard(event) {
     buttonEl.setAttribute('id','button');
     buttonEl.textContent = 'MOVE';
     parentEl.appendChild(buttonEl);
+    
+    
+    // targets the 'move' button
+    // let turnGenerator = document.getElementById('button');
     let turnGenerator = document.getElementById('button');
     turnGenerator.addEventListener('click',Board.prototype.turnAction);
 
